@@ -201,6 +201,11 @@ lionFrame
 
 /* MONKEY */
 
+ctx.save();
+
+ctx.globalCompositeOperation=
+"source-over";
+
 ctx.drawImage(
 
 monkey,
@@ -218,9 +223,13 @@ player.y,
 
 );
 
+ctx.restore();
+
 /* LION */
 
 lionX+=0.03;
+
+ctx.save();
 
 ctx.drawImage(
 
@@ -238,6 +247,8 @@ lionX,
 150
 
 );
+
+ctx.restore();
 
 /* BANANAS */
 
