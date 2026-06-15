@@ -15,38 +15,38 @@ monkey.src = "assets/monkey.png";
 const lion = new Image();
 lion.src = "assets/lion.png";
 
-const rockImg = new Image();
-rockImg.src = "assets/rock.png";
+const rock = new Image();
+rock.src = "assets/rock.png";
 
 /* GAME */
 
-let scroll = 0;
+let bgX = 0;
 
 let monkeyFrame = 0;
 let lionFrame = 0;
 
 let score = 0;
-
 let distance = 0;
 
-let boost = false;
-let boostTimer = 0;
-
-let jumps = 0;
+let gameOver = false;
 
 let player = {
+
 x:180,
 y:350,
+
 vy:0,
-jump:false
+
+jumps:0
+
 };
 
-let lionX = 20;
+let lionX = 10;
 
 let bananas = [
-{x:900,y:280},
-{x:1500,y:260},
-{x:2200,y:320}
+{x:900,y:300},
+{x:1700,y:260},
+{x:2400,y:320}
 ];
 
 let rocks = [
@@ -59,13 +59,13 @@ let rocks = [
 
 function jump(){
 
-if(jumps<2){
+if(
+player.jumps<2
+){
 
 player.vy=-22;
 
-player.jump=true;
-
-jumps++;
+player.jumps++;
 
 }
 
@@ -88,30 +88,29 @@ jump();
 }
 );
 
-const btn =
+const jumpBtn =
 document.getElementById(
 "jump"
 );
 
-if(btn){
+if(
+jumpBtn
+){
 
-btn.onclick=jump;
+jumpBtn.onclick=
+jump;
 
 }
 
-/* COLLISION */
+/* HIT */
 
-function hitRock(r){
+function rockHit(r){
 
 return(
 
-player.x+80>r.x
+player.x+80>r.x &&
 
-&&
-
-player.x<r.x+60
-
-&&
+player.x<r.x+70 &&
 
 player.y>300
 
@@ -119,9 +118,14 @@ player.y>300
 
 }
 
-/* MAIN */
+/* DRAW */
 
 function draw(){
+
+if(
+gameOver
+)
+return;
 
 requestAnimationFrame(
 draw
@@ -136,17 +140,17 @@ canvas.height
 
 /* BG */
 
-scroll-=boost?12:6;
+bgX-=6;
 
 if(
-scroll<
+bgX<
 -canvas.width
 )
-scroll=0;
+bgX=0;
 
 ctx.drawImage(
 bg,
-scroll,
+bgX,
 0,
 canvas.width,
 canvas.height
@@ -154,7 +158,7 @@ canvas.height
 
 ctx.drawImage(
 bg,
-scroll+
+bgX+
 canvas.width,
 0,
 canvas.width,
@@ -175,24 +179,22 @@ player.y=350;
 
 player.vy=0;
 
-player.jump=false;
-
-jumps=0;
+player.jumps=0;
 
 }
 
-/* ANIMATION */
+/* FRAMES */
 
-monkeyFrame+=0.25;
+monkeyFrame+=0.2;
 
-lionFrame+=0.15;
+lionFrame+=0.1;
 
-let m=
+let mf=
 Math.floor(
 monkeyFrame
 )%4;
 
-let l=
+let lf=
 Math.floor(
 lionFrame
 )%4;
@@ -203,7 +205,7 @@ ctx.drawImage(
 
 monkey,
 
-m*400,
+mf*400,
 0,
 400,
 400,
@@ -218,13 +220,13 @@ player.y,
 
 /* LION */
 
-lionX+=boost?0.01:0.03;
+lionX+=0.03;
 
 ctx.drawImage(
 
 lion,
 
-l*400,
+lf*400,
 0,
 400,
 400,
@@ -243,9 +245,9 @@ bananas.forEach(
 
 b=>{
 
-b.x-=boost?12:6;
+b.x-=6;
 
-ctx.font="50px serif";
+ctx.font="45px serif";
 
 ctx.fillText(
 "🍌",
@@ -256,17 +258,12 @@ b.y
 if(
 
 Math.abs(
-player.x-
-b.x
+b.x-player.x
 )<50
 
 ){
 
 score+=10;
-
-boost=true;
-
-boostTimer=180;
 
 b.x+=2500;
 
@@ -274,66 +271,76 @@ b.x+=2500;
 
 }
 
-/* ROCK */
-
 );
+
+/* ROCK */
 
 rocks.forEach(
 
 r=>{
 
-r.x-=boost?12:6;
+r.x-=6;
 
 ctx.drawImage(
-
-rockImg,
-
+rock,
 r.x,
-
 390,
-
 90,
-
 90
-
 );
 
 if(
-hitRock(
+rockHit(
 r
 )
 ){
 
+gameOver=true;
+
+setTimeout(
+()=>{
+
 alert(
-"🪨 GAME OVER\nScore: "+score
+"💀 GAME OVER\nScore: "+score
 );
 
 location.reload();
 
+},
+100
+);
+
 }
 
-});
+}
 
-/* BOOST */
+/* DISTANCE */
 
-if(boost){
+);
 
-boostTimer--;
+distance+=0.2;
 
-distance+=10;
+/* LION */
 
 if(
-boostTimer<0
+lionX>
+player.x-30
 ){
 
-boost=false;
+gameOver=true;
 
-}
+setTimeout(
+()=>{
 
-}
-else{
+alert(
+"🦁 LION CAUGHT YOU\nScore: "+score
+);
 
-distance+=5;
+location.reload();
+
+},
+100
+);
 
 }
 
@@ -344,59 +351,30 @@ distance>
 1000
 ){
 
+gameOver=true;
+
+setTimeout(
+()=>{
+
 alert(
 "🏆 YOU ESCAPED!"
 );
 
 location.reload();
 
-}
-
-/* LION */
-
-if(
-lionX>
-player.x-40
-){
-
-alert(
-"🦁 LION CAUGHT YOU"
+},
+100
 );
-
-location.reload();
 
 }
 
 /* UI */
 
-/* GAME OVER */
+ctx.fillStyle=
+"white";
 
-if(
-lionX>
-player.x-40
-){
-
-localStorage.setItem(
-"best",
-Math.max(
-score,
-localStorage.getItem(
-"best"
-)||0
-)
-);
-
-showGameOver();
-
-return;
-
-}
-
-/* UI */
-
-ctx.fillStyle="white";
-
-ctx.font="35px Arial";
+ctx.font=
+"35px Arial";
 
 ctx.fillText(
 "🍌 "+score,
@@ -405,104 +383,18 @@ ctx.fillText(
 );
 
 ctx.fillText(
-"🏃 "+distance+"m",
+"🏃 "+
+Math.floor(
+distance
+)+"m",
 20,
 100
 );
 
 ctx.fillText(
-"🏆 "+
-(
-localStorage.getItem(
-"best"
-)||0
-),
+"⬆️ Double Jump",
 20,
 150
-);
-
-/* NIGHT */
-
-if(
-distance>500
-){
-
-ctx.fillStyle=
-"rgba(0,0,40,.3)";
-
-ctx.fillRect(
-0,
-0,
-canvas.width,
-canvas.height
-);
-
-}
-
-/* GAME OVER */
-
-function showGameOver(){
-
-ctx.fillStyle=
-"rgba(0,0,0,.8)";
-
-ctx.fillRect(
-0,
-0,
-canvas.width,
-canvas.height
-);
-
-ctx.fillStyle=
-"red";
-
-ctx.font=
-"80px Arial";
-
-ctx.fillText(
-
-"💀 DEAD",
-
-canvas.width/2-180,
-
-200
-
-);
-
-ctx.fillStyle=
-"white";
-
-ctx.font=
-"40px Arial";
-
-ctx.fillText(
-
-"Score: "+score,
-
-canvas.width/2-100,
-
-320
-
-);
-
-ctx.fillText(
-
-"Distance: "+distance,
-
-canvas.width/2-120,
-
-400
-
-);
-
-ctx.fillText(
-
-"Tap Refresh",
-
-canvas.width/2-120,
-
-500
-
 );
 
 }
