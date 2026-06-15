@@ -15,6 +15,9 @@ monkey.src = "assets/monkey.png";
 const lion = new Image();
 lion.src = "assets/lion.png";
 
+const rockImg = new Image();
+rockImg.src = "assets/rock.png";
+
 /* GAME */
 
 let scroll = 0;
@@ -23,6 +26,13 @@ let monkeyFrame = 0;
 let lionFrame = 0;
 
 let score = 0;
+
+let distance = 0;
+
+let boost = false;
+let boostTimer = 0;
+
+let jumps = 0;
 
 let player = {
 x:180,
@@ -35,25 +45,27 @@ let lionX = 20;
 
 let bananas = [
 {x:900,y:280},
-{x:1600,y:320},
-{x:2200,y:260}
+{x:1500,y:260},
+{x:2200,y:320}
 ];
 
 let rocks = [
 {x:1200},
-{x:1900},
-{x:2800}
+{x:2200},
+{x:3200}
 ];
 
 /* INPUT */
 
 function jump(){
 
-if(!player.jump){
+if(jumps<2){
 
-player.vy = -22;
+player.vy=-22;
 
-player.jump = true;
+player.jump=true;
+
+jumps++;
 
 }
 
@@ -76,15 +88,14 @@ jump();
 }
 );
 
-const jumpBtn =
+const btn =
 document.getElementById(
 "jump"
 );
 
-if(jumpBtn){
+if(btn){
 
-jumpBtn.onclick =
-jump;
+btn.onclick=jump;
 
 }
 
@@ -92,7 +103,7 @@ jump;
 
 function hitRock(r){
 
-return (
+return(
 
 player.x+80>r.x
 
@@ -108,7 +119,7 @@ player.y>300
 
 }
 
-/* DRAW */
+/* MAIN */
 
 function draw(){
 
@@ -123,18 +134,15 @@ canvas.width,
 canvas.height
 );
 
-/* BACKGROUND */
+/* BG */
 
-scroll-=6;
+scroll-=boost?12:6;
 
 if(
 scroll<
 -canvas.width
-){
-
+)
 scroll=0;
-
-}
 
 ctx.drawImage(
 bg,
@@ -153,7 +161,7 @@ canvas.width,
 canvas.height
 );
 
-/* JUMP */
+/* PLAYER */
 
 player.vy+=1;
 
@@ -169,20 +177,22 @@ player.vy=0;
 
 player.jump=false;
 
+jumps=0;
+
 }
 
 /* ANIMATION */
 
-monkeyFrame+=0.2;
+monkeyFrame+=0.25;
 
-lionFrame+=0.1;
+lionFrame+=0.15;
 
-let m =
+let m=
 Math.floor(
 monkeyFrame
 )%4;
 
-let l =
+let l=
 Math.floor(
 lionFrame
 )%4;
@@ -208,7 +218,7 @@ player.y,
 
 /* LION */
 
-lionX+=0.03;
+lionX+=boost?0.01:0.03;
 
 ctx.drawImage(
 
@@ -233,7 +243,7 @@ bananas.forEach(
 
 b=>{
 
-b.x-=6;
+b.x-=boost?12:6;
 
 ctx.font="50px serif";
 
@@ -254,30 +264,38 @@ b.x
 
 score+=10;
 
+boost=true;
+
+boostTimer=180;
+
 b.x+=2500;
 
 }
 
 }
 
-);
+/* ROCK */
 
-/* ROCKS */
+);
 
 rocks.forEach(
 
 r=>{
 
-r.x-=6;
+r.x-=boost?12:6;
 
-ctx.fillStyle=
-"#6d4c41";
+ctx.drawImage(
 
-ctx.fillRect(
+rockImg,
+
 r.x,
-430,
-60,
-40
+
+390,
+
+90,
+
+90
+
 );
 
 if(
@@ -296,7 +314,45 @@ location.reload();
 
 });
 
-/* LION CATCH */
+/* BOOST */
+
+if(boost){
+
+boostTimer--;
+
+distance+=10;
+
+if(
+boostTimer<0
+){
+
+boost=false;
+
+}
+
+}
+else{
+
+distance+=5;
+
+}
+
+/* WIN */
+
+if(
+distance>
+1000
+){
+
+alert(
+"🏆 YOU ESCAPED!"
+);
+
+location.reload();
+
+}
+
+/* LION */
 
 if(
 lionX>
@@ -304,36 +360,60 @@ player.x-40
 ){
 
 alert(
-"🦁 LION CAUGHT YOU\nScore: "+score
+"🦁 LION CAUGHT YOU"
 );
 
 location.reload();
 
 }
 
-/* SCORE */
+/* UI */
 
 ctx.fillStyle=
 "white";
 
 ctx.font=
-"40px Arial";
+"35px Arial";
 
 ctx.fillText(
 
-"Score: "+score,
+"🍌 "+score,
 
 20,
 
-60
+50
+
+);
+
+ctx.fillText(
+
+"🏃 "+distance+"m",
+
+20,
+
+100
+
+);
+
+if(boost){
+
+ctx.fillText(
+
+"⚡ BOOST",
+
+20,
+
+150
 
 );
 
 }
 
+}
+
 /* START */
 
-monkey.onload =
+monkey.onload=
 ()=>{
 
 draw();
