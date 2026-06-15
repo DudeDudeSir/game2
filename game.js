@@ -198,8 +198,9 @@ a.y+90>
 );
 
 }
-
 function draw(){
+
+requestAnimationFrame(draw);
 
 ctx.clearRect(
 0,
@@ -227,8 +228,7 @@ canvas.height
 );
 
 if(
-scroll<
--canvas.width
+scroll<-canvas.width
 )
 scroll=0;
 
@@ -236,9 +236,7 @@ player.vy+=1;
 
 player.y+=player.vy;
 
-if(
-player.y>350
-){
+if(player.y>350){
 
 player.y=350;
 
@@ -265,10 +263,8 @@ m*400,
 0,
 400,
 400,
-
 player.x,
 player.y,
-
 120,
 120
 );
@@ -281,16 +277,13 @@ l*400,
 0,
 400,
 400,
-
 lionX,
 360,
 140,
 140
 );
 
-bananas.forEach(
-
-b=>{
+bananas.forEach(b=>{
 
 b.x-=6;
 
@@ -303,26 +296,20 @@ b.y
 );
 
 if(
-
 Math.abs(
 b.x-player.x
 )<50
-
 ){
 
 score+=10;
 
-b.x+=2500;
+b.x+=2200;
 
 }
 
-}
+});
 
-);
-
-rocks.forEach(
-
-r=>{
+rocks.forEach(r=>{
 
 r.x-=6;
 
@@ -330,15 +317,10 @@ ctx.fillStyle=
 "#795548";
 
 ctx.fillRect(
-
 r.x,
-
 410,
-
 60,
-
 40
-
 );
 
 if(
@@ -349,7 +331,7 @@ r
 ){
 
 alert(
-"🪨 YOU HIT ROCK\nScore:"+score
+"🪨 GAME OVER\nScore:"+score
 );
 
 location.reload();
@@ -378,17 +360,9 @@ ctx.font=
 "40px Arial";
 
 ctx.fillText(
-
 "Score: "+score,
-
 20,
-
 50
-
-);
-
-requestAnimationFrame(
-draw
 );
 
 }
