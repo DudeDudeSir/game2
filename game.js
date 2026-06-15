@@ -369,45 +369,141 @@ location.reload();
 
 /* UI */
 
+/* GAME OVER */
+
+if(
+lionX>
+player.x-40
+){
+
+localStorage.setItem(
+"best",
+Math.max(
+score,
+localStorage.getItem(
+"best"
+)||0
+)
+);
+
+showGameOver();
+
+return;
+
+}
+
+/* UI */
+
+ctx.fillStyle="white";
+
+ctx.font="35px Arial";
+
+ctx.fillText(
+"🍌 "+score,
+20,
+50
+);
+
+ctx.fillText(
+"🏃 "+distance+"m",
+20,
+100
+);
+
+ctx.fillText(
+"🏆 "+
+(
+localStorage.getItem(
+"best"
+)||0
+),
+20,
+150
+);
+
+/* NIGHT */
+
+if(
+distance>500
+){
+
+ctx.fillStyle=
+"rgba(0,0,40,.3)";
+
+ctx.fillRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+}
+
+/* GAME OVER */
+
+function showGameOver(){
+
+ctx.fillStyle=
+"rgba(0,0,0,.8)";
+
+ctx.fillRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+ctx.fillStyle=
+"red";
+
+ctx.font=
+"80px Arial";
+
+ctx.fillText(
+
+"💀 DEAD",
+
+canvas.width/2-180,
+
+200
+
+);
+
 ctx.fillStyle=
 "white";
 
 ctx.font=
-"35px Arial";
+"40px Arial";
 
 ctx.fillText(
 
-"🍌 "+score,
+"Score: "+score,
 
-20,
+canvas.width/2-100,
 
-50
+320
 
 );
 
 ctx.fillText(
 
-"🏃 "+distance+"m",
+"Distance: "+distance,
 
-20,
+canvas.width/2-120,
 
-100
+400
 
 );
-
-if(boost){
 
 ctx.fillText(
 
-"⚡ BOOST",
+"Tap Refresh",
 
-20,
+canvas.width/2-120,
 
-150
+500
 
 );
-
-}
 
 }
 
